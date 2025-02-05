@@ -22,12 +22,11 @@ struct ContentView: View {
                     place.mapItem.name!,
                     coordinate: place.mapItem.placemark.coordinate
                 ) {
-                    Image(systemName: "star.circle")
-                        .resizable()
-                        .foregroundStyle(.red)
-                        .frame(width: 44, height: 44)
-                        .background(.white)
-                        .clipShape(.circle)
+                    if let url = place.mapItem.url {
+                        Link(destination: url, label: {
+                            Image("pizza")
+                        })
+                    }
                 }
             }
         }
@@ -43,9 +42,9 @@ struct ContentView: View {
         searchRequest.region = mapRegion
         let search = MKLocalSearch(request: searchRequest)
         search.start { response, error in
-            if let reponse = response {
+            if let response = response {
                 places.removeAll()
-                for mapItem in response!.mapItems {
+                for mapItem in response.mapItems {
                     places.append(Place(mapItem: mapItem))
                 }
             }
