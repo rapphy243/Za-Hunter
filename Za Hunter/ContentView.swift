@@ -15,27 +15,23 @@ struct ContentView: View {
     @StateObject var locationManager = LocationManager()
     @State private var places = [Place]()
     var body: some View {
-        Map(position: $startPosition) {
-            UserAnnotation()
-            ForEach(places) { place in
-                Annotation(
-                    place.mapItem.name!,
-                    coordinate: place.mapItem.placemark.coordinate
-                ) {
-                    if let url = place.mapItem.url {
-                        Link(destination: url, label: {
+        NavigationView {
+            Map(position: $startPosition) {
+                UserAnnotation()
+                ForEach(places) { place in
+                    Annotation(place.mapItem.name!, coordinate: place.mapItem.placemark.coordinate) {
+                        NavigationLink(destination: LocationDetailsView(mapItem: place.mapItem)) {
                             Image("pizza")
-                        })
+                        }
                     }
                 }
             }
-        }
-        .onMapCameraChange { context in
-            mapRegion = context.region
-            performSearch(item: "Pizza")
+            .onMapCameraChange { context in
+                mapRegion = context.region
+                performSearch(item: "Pizza")
+            }
         }
     }
-    
     func performSearch(item: String) {
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = item
